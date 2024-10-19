@@ -1,0 +1,145 @@
+{% extends 'user/home.html' %}
+
+{% block content %}
+<h2>Edit Teacher Information</h2>
+<form id="edit-teacher-form" enctype="multipart/form-data">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required>
+
+    <label for="phone">Phone Number:</label>
+    <input type="text" id="phone" name="phone">
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email">
+
+    <label for="officialphone">Official Phone:</label>
+    <input type="text" id="officialphone" name="officialphone">
+
+    <label for="officialphonext">Official Phone Extension:</label>
+    <input type="text" id="officialphonext" name="officialphonext">
+
+    <label for="person_type">Person Type:</label>
+    <select id="person_type" name="person_type">
+        <option value="student">Student</option>
+        <option value="teacher">Teacher</option>
+    </select>
+
+    <label for="is_class_teacher">Is Class Teacher?</label>
+    <input type="checkbox" id="is_class_teacher" name="is_class_teacher">
+
+    <div id="class-stream-section" style="display: none;">
+        <label for="class_field">Class:</label>
+        <select id="class_field" name="class_field">
+            <option value="">Select Class</option>
+            <option value="class1">Class 1</option>
+            <option value="class2">Class 2</option>
+        </select>
+
+        <label for="stream_field">Stream:</label>
+        <select id="stream_field" name="stream_field">
+            <option value="">Select Stream</option>
+            <option value="streamA">Stream A</option>
+            <option value="streamB">Stream B</option>
+        </select>
+        <div>
+            <Textarea placeholder="Give clear directions on how to get to this teacher's class room"></Textarea>
+        </div>
+    </div>
+
+    <button type="button" onclick="submitTeacherForm()">Submit</button>
+</form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Pre-fill the form with the teacher's data
+        const teacherData = {{ teacher_data|safe }};  // Replace with the actual data from the view
+
+        // Populate form fields
+        document.getElementById('name').value = teacherData.name;
+        document.getElementById('phone').value = teacherData.phone;
+        document.getElementById('email').value = teacherData.email;
+        document.getElementById('officialphone').value = teacherData.officialphone;
+        document.getElementById('officialphonext').value = teacherData.officialphonext;
+        document.getElementById('person_type').value = teacherData.person_type;
+
+        // Check if the teacher is a class teacher and toggle the class-stream section
+        if (teacherData.is_class_teacher) {
+            document.getElementById('is_class_teacher').checked = true;
+            document.getElementById('class-stream-section').style.display = 'block';
+            document.getElementById('class_field').value = teacherData.class_field;
+            document.getElementById('stream_field').value = teacherData.stream_field;
+        }
+
+        // Show/hide class and stream fields based on class teacher checkbox
+        document.getElementById('is_class_teacher').addEventListener('change', function() {
+            const classStreamSection = document.getElementById('class-stream-section');
+            if (this.checked) {
+                classStreamSection.style.display = 'block';
+            } else {
+                classStreamSection.style.display = 'none';
+            }
+        });
+    });
+
+    // Function to submit the form via AJAX
+    function submitTeacherForm() {
+        const form = document.getElementById('edit-teacher-form');
+        const formData = new FormData(form);
+
+        fetch('/edit-teacher-url/', {  // Replace with the correct endpoint URL
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',  // Include CSRF token for security
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Teacher details updated successfully!');
+            } else {
+                alert('Error updating teacher details.');
+                console.error(data.errors);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+</script>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+    form {
+        max-width: 500px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f7f7f7;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+    }
+    label {
+        display: block;
+        margin-bottom: 8px;
+    }
+    input[type="text"], input[type="email"], select, input[type="file"] {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+    button {
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    button:hover {
+        background-color: #45a049;
+    }
+</style>
+{% endblock %}

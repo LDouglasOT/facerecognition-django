@@ -1,0 +1,84 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Django stuff:
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+db.sqlite3
+db.sqlite3-journal
+
+# If you are using MySQL, PostgreSQL, etc., ignore the DB dump files:
+*.sql
+*.sqlite3
+
+# Django migrations
+**/migrations/**
+
+# Static files (collected by `collectstatic`)
+staticfiles/
+static/
+
+# Media files
+media/
+
+# Virtual environment
+venv/
+ENV/
+env/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# VS Code configuration files
+.vscode/
+
+# PyCharm configuration files
+.idea/
+
+# Jupyter Notebook files
+.ipynb_checkpoints/
+
+# macOS-specific files
+.DS_Store
+
+*.bak
+*.swp
+*~
+
+*.env
+Dockerfile
+docker-compose.yml
+
+htmlcov/
+.coverage
+*.cover
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.coveragerc
+
+node_modules/
+
+*.whl
+
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+wheels/
+share/python-wheels/
+
+celerybeat-schedule
+celerybeat.pid

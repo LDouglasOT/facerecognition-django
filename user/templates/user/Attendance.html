@@ -1,0 +1,108 @@
+{% extends 'user/home.html' %}
+
+{% block content %}
+<style>
+    .container {
+        text-align: center;
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+    }
+</style>
+
+<div class="container">
+    <br>
+    <form method="GET" class="flex gap-4 mb-4">
+        <input type="text" name="creator_name" placeholder="Creator Name" class="input input-bordered" />
+        <input type="date" name="start_date" class="input input-bordered" />
+        <input type="date" name="end_date" class="input input-bordered" />
+        <button type="submit" class="btn bg-blue-600 text-white">Filter</button>
+    </form>
+
+    <div class="overflow-x-auto w-full h-full">
+        <table class="table border w-full">
+            <thead>
+                <tr>
+                    <th>
+                        <label>
+                            <input type="checkbox" class="checkbox" />
+                        </label>
+                    </th>
+                    <th>Visitor/Staff</th>
+                    <th>Student</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Reason</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in attendance_records %}
+                <tr>
+                    <th>
+                        <label>
+                            <input type="checkbox" class="checkbox" />
+                        </label>
+                    </th>
+                    <td>
+                        <div class="flex items-center gap-3">
+                            <div class="avatar">
+                                <div class="mask mask-squircle h-12 w-12">
+                                    <img src="
+                                    {% if record.parent %}
+                                    {{ record.parent.imgurl }}
+                                    {% elif record.student %}
+                                    {{ record.student.imgurl }}
+                                    {% else %}
+                                    {{ record.user.imgurl }}
+                                    {% endif %}
+                                   
+                                    
+                                    " alt="Avatar" />
+                                </div>
+                            </div>
+                            <div>
+
+                                <div class="font-bold">
+                                    {% if record.parent %}
+                                    {{ record.parent.parentname }}
+                                    {% elif record.student %}
+                                    {{ record.student.Name }}
+                                    {% else %}
+                                    {{ record.user.teachername }}
+                                    {% endif %}
+                                </div>
+                                <div class="text-sm opacity-50">{{ record.parent.phone }}/{{ record.parent.phone2 }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>{{ record.student.Name }}</td>
+                    <td>{{ record.date }}</td>
+                    <td>
+                        {% if record.parent %}
+                        <button class="badge badge-success gap-4">Parent</button>
+                        {% elif record.student %}
+                        <button class="badge badge-success  gap-2">Student</button>
+                        {% else %}
+                        <button class="badge badge-success gap-2">Teacher</button>
+                        {% endif %}
+               
+                    </td>
+                    <td>{{ record.reason }}</td>
+                </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="6" class="py-2 px-4 text-center text-gray-400">No attendance records found.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+
+</script>
+{% endblock %}

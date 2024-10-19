@@ -1,0 +1,171 @@
+{% extends 'user/home.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="alert alert-success alert-dismissible fade successfull" role="alert">
+        <strong>Success:</strong> User added to access list.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    {% if success_message %}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ success_message }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% endif %}
+
+    <!-- Error notification -->
+    {% if error_message %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ error_message }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% endif %}
+
+    <h2 class="mb-4">Access Control</h2>
+
+    <!-- Button trigger modal for adding a new user -->
+    <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#addUserModal">
+        Add New User
+    </button>
+
+    <!-- Table to display users -->
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Email</th>
+                <th>filename</th>
+                <th>
+                <div class="actionsclass">Actions</div>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Iterate through users and display them -->
+            {% for user in users %}
+            <tr>
+                <td><a href="{% url 'logs_id' user.id %}">{{ user.username }}</a></td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.filename }}</td>
+                <td>
+                    <div class="btncontainer">
+                        <div>
+                            {% if user.is_superuser %}
+                            <a class="btn btn-success btn-sm fixed-width-btn wellstyled" href="{% url 'revoke' user.id %}">Revoke admin</a>
+                            {% else %}
+                            <a class="btn btn-success btn-sm fixed-width-btn wellstyled" href="{% url 'super' user.id %}">Make admin</a>
+                            {% endif %}
+                        </div>
+                        
+                    <a class="btn btn-danger btn-sm" href="{% url 'delete_user' user.id %}">Delete</a>
+                  </div>
+                </td>
+            </tr>
+            {% endfor %} 
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal for adding a new user -->
+<div class="modal fade" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="addUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addUserModalLabel">Add New User</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Form for adding a new user -->
+                <form id="addUserForm">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email" name="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="addUserButton">
+                        <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                        Add User
+                    </button>                    
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .btncontainer{
+        display: flex;
+        justify-content: space-between;
+        padding: 0 10px;
+    }
+    .wellstyled{
+        width: 130px;
+    }
+    .actionsclass{
+        margin-left: 10px;
+    }
+</style>
+<script>
+// Function to handle form submission for adding a new user
+$('#addUserForm').submit(function(event) {
+    event.preventDefault();
+    
+    // Disable the button to prevent multiple submissions
+    $('#addUserButton').prop('disabled', true);
+    
+    // Show the spinner
+    $('#addUserButton .spinner-border').removeClass('d-none');
+    
+    // Get form data
+    var formData = $(this).serialize();
+
+    // Send AJAX request to create a new user
+    $.ajax({
+        type: 'POST',
+        url: '{% url "add_user" %}', // Replace with your Django URL for adding a new user
+        data: formData,
+        success: function(response) {
+            // Show success notification
+            $('.successfull').addClass('show');
+            setTimeout(function() {
+                $('.successfull').removeClass('show');
+                location.reload();
+            }, 2000);
+
+            // Reload the page to update the user list
+            
+        },
+        error: function(xhr, status, error) {
+            // Show error notification
+            $('.super-danger').addClass('show');
+            setTimeout(function() {
+                $('.super-danger').removeClass('show');
+            }, 1000);
+        },
+        complete: function() {
+            // Enable the button
+            $('#addUserButton').prop('disabled', false);
+            
+            // Hide the spinner
+            $('#addUserButton .spinner-border').addClass('d-none');
+        }
+    });
+});
+
+
+</script>
+{% endblock %}

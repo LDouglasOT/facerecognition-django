@@ -1,0 +1,51 @@
+{% extends 'user/home.html' %}
+
+{% block content %}
+<div class="bg-gray-100 flex items-center justify-center h-screen">
+
+    <div class="bg-white shadow-md rounded-lg p-6 max-w-lg w-full">
+        <h2 class="text-2xl font-bold mb-4 text-center">Add New Clearance Code</h2>
+        {% if messages %}
+        <div>
+            {% for message in messages %}
+                <div class="p-4 mb-4 {{ message.tags }} rounded-lg  bg-blue-500 text-white text-xl" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+        <form action="{% url 'add-clearance-code' %}" method="POST" class="space-y-4">
+            {% csrf_token %}
+            <div>
+                <label for="visitor_name" class="block text-sm font-medium text-gray-700">Visitor Name</label>
+                <input type="text" id="visitor_name" name="visitor_name" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm py-3">
+            </div>
+
+            <div>
+                <label for="visitor_contact" class="block text-sm font-medium text-gray-700">Visitor Contact</label>
+                <input type="text" id="visitor_contact" name="visitor_contact" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm py-3">
+            </div>
+
+            <div>
+                <label for="visitor_relationship" class="block text-sm font-medium text-gray-700">Visitor Relationship</label>
+                <input type="text" id="visitor_relationship" name="visitor_relationship" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm py-3">
+            </div>
+
+            <div>
+                <label for="reason" class="block text-sm font-medium text-gray-700">Reason</label>
+                <input type="text" id="reason" name="reason" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm py-3">
+            </div>
+
+            <div>
+                <label for="expiry_date" class="block text-sm font-medium text-gray-700">Expiry Date</label>
+                <input type="date" id="expiry_date" name="expiry_date" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+            </div>
+
+            <div>
+                <button type="submit" class="w-full bg-blue-500 text-white py-2 px-4 rounded-md shadow hover:bg-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">Add Clearance Code</button>
+            </div>
+        </form>
+    </div>
+
+</div>
+{% endblock %}

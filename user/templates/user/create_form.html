@@ -1,0 +1,98 @@
+{% extends 'user/home.html' %}
+
+{% block content %}
+<style>
+    .container {
+        text-align: center;
+        width: 100%;
+        padding: 20px;
+    }
+    .form-section {
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        margin: 0 auto;
+        width: 80%;
+        max-width: 600px;
+    }
+    h2 {
+        margin-bottom: 20px;
+        color: #333;
+    }
+    label {
+        display: block;
+        margin: 10px 0 5px;
+        font-weight: bold;
+        color: #555;
+    }
+    input[type="text"],
+    input[type="date"],
+    input[type="email"],
+    input[type="number"] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 16px;
+    }
+    input[type="text"]:focus,
+    input[type="date"]:focus,
+    input[type="email"]:focus,
+    input[type="number"]:focus {
+        border-color: #007bff;
+        outline: none;
+    }
+    button {
+        background-color: #007bff;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s;
+    }
+    button:hover {
+        background-color: #0056b3;
+    }
+    .back-button {
+        margin-top: 20px;
+        background-color: #6c757d;
+    }
+    .back-button:hover {
+        background-color: #5a6268;
+    }
+</style>
+
+<div class="container">
+    <h2>Create New Form</h2>
+    <div class="form-section">
+        <form action="{% url 'form_list_create' %}" method="POST">
+            {% csrf_token %}
+            <div>
+                <label for="form_name">Enter the Name of the Class</label> 
+                <input type="text" id="form_name" name="form_name" required>
+            </div>
+     
+            <div>
+                <label for="class_teacher">Class Teacher's Name</label> 
+                <input type="text" id="class_teacher" name="class_teacher">
+            </div>
+            <div>
+                <label for="form_description">Class Teacher's contact</label>  
+                <input type="text" id="form_description" name="form_description">
+            </div>
+            <div>
+                <label for="directions">Brief directions for the class</label> 
+                <input type="text" id="directions" name="directions">
+            </div>
+            <button type="submit">Create Form</button>
+        </form>
+    </div>
+    <br>
+    <a href="{% url 'form_list_create' %}" class="back-button bg-gray-500 text-white px-4 py-2 rounded-md">Back to Form List</a>
+</div>
+
+{% endblock %}

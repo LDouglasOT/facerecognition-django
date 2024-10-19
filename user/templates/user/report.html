@@ -1,0 +1,169 @@
+{% extends 'user/home.html' %}
+
+{% block content %}
+<style>
+    .container {
+        text-align: center;
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+    }
+</style>
+
+<div class="container">
+    <br>
+    <div class="flex justify-between items-center w-full px-60">
+        <span>.</span>
+        <span>.</span>
+    </div>
+    <br>
+    <div class="flex items-center justify-between w-full">
+        <!-- Search Bar -->
+        <label class="input input-bordered mx-5 flex items-center py-6 gap-2 w-8/12 mx-auto">
+            <input type="text" id="searchInput" class="grow" placeholder="Search by names" />
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="h-4 w-4 opacity-70">
+                <path fill-rule="evenodd" d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z" clip-rule="evenodd" />
+            </svg>
+        </label>
+        <!-- Date Filter -->
+        <div class="flex gap-4 mx-10">
+            <input type="date" id="start_date" value="{{ start_date }}" class="input input-bordered" placeholder="Start Date" />
+            <input type="date" id="end_date" value="{{ end_date }}" class="input input-bordered" placeholder="End Date" />
+            <button onclick="filterByDate()" class="btn bg-slate-500 text-white px-10">Filter</button>
+        </div>
+        <br>
+    </div>
+
+    <br>
+    <!-- Conditional Chart Display -->
+    {% if chart_data %}
+        <div class="chart-container">
+            <canvas id="attendanceChart"></canvas>
+        </div>
+        <br>
+    {% endif %}
+
+    <!-- Table -->
+    <div class="overflow-x-auto w-full h-full">
+        <table class="table border w-full">
+            <!-- head -->
+            <thead>
+                <tr>
+                    <th>
+                        <label>
+                            <input type="checkbox" class="checkbox" />
+                        </label>
+                    </th>
+                    <th>Names</th>
+                    <th>Reason</th>
+                    <th>Time in</th>
+                    <th>Type</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="attendanceTableBody">
+                {% for entry in attendance %}
+                <tr>
+                    <th>
+                        <label>
+                            <input type="checkbox" class="checkbox" />
+                        </label>
+                    </th>
+                    <td class="name-column">
+                        <div class="flex items-center gap-3">
+                            <div>
+                                <div class="font-bold">{{ entry.user.name }}</div>
+                                <br />
+                                <div class="font-bold">{{ entry.user.phone }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="text-sm opacity-50">{{ entry.reason }}</div>
+                    </td>
+                    <td>{{ entry.date }} at {{ entry.time }}</td>
+                    <td>{{ entry.user.person_type }}</td>
+                    <th>
+                        <button class="btn btn-error bg-slate-600 mx-10 font-bold text-white hover:bg-slate-600">View Report</button>
+                        <button class="btn btn-error bg-red-600 text-white hover:bg-red-600">Delete</button>
+                    </th>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('attendanceChart').getContext('2d');
+    const chartData = {{ chart_data|safe }};
+    
+    if (chartData) {
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: chartData.labels,
+                datasets: [{
+                    label: 'Attendance Summary',
+                    data: chartData.data,
+                    backgroundColor: ['#36a2eb', '#ff6384'],
+                    borderColor: '#fff',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (context.parsed !== null) {
+                                    label += `: ${context.parsed} days`;
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+});
+
+// Function to filter by date and reload the page with query parameters
+function filterByDate() {
+    const startDate = document.getElementById('start_date').value;
+    const endDate = document.getElementById('end_date').value;
+
+    let queryString = `?start_date=${startDate}&end_date=${endDate}`;
+    window.location.href = queryString;
+}
+
+// Function to filter table rows by name
+document.getElementById('searchInput').addEventListener('input', function() {
+    const searchTerm = this.value.toLowerCase();
+    const rows = document.querySelectorAll('#attendanceTableBody tr');
+    
+    rows.forEach(row => {
+        const nameCell = row.querySelector('.name-column');
+        if (nameCell) {
+            const name = nameCell.textContent.toLowerCase();
+            if (name.includes(searchTerm)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

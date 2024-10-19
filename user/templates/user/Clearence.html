@@ -1,0 +1,93 @@
+{% extends 'user/home.html' %}
+
+{% block content %}
+<style>
+    .container {
+        text-align: center;
+        width:100%;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+    }
+</style>
+
+<div class="container">
+    <br>
+    <form method="GET" class="flex gap-4 mb-4">
+        <input type="text" name="creator_name" placeholder="Creator Name" class="input input-bordered" />
+        <input type="date" name="start_date" class="input input-bordered" />
+        <input type="date" name="end_date" class="input input-bordered" />
+        <button type="submit" class="btn bg-blue-600 text-white">Filter</button>
+        <a href="{% url 'add-clearance-code' %}" class="bg-green-500 rounde-lg text-white decoration flex items-center justify-center px-4 rounded-lg ">New Clearance code</a>
+    </form>
+
+    <div class="overflow-x-auto w-full h-full">
+        <table class="table border w-full">
+            <thead>
+                <tr>
+                    <th>
+                        <label>
+                            <input type="checkbox" class="checkbox" />
+                        </label>
+                    </th>
+                    <th>Creator</th>
+                    <th>Visitor</th>
+                    <th>Code</th>
+                    <th>Reason</th>
+                    <th>Created Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in codes %}
+                <tr>
+                    <th>
+                        <label>
+                            <input type="checkbox" class="checkbox" />
+                        </label>
+                    </th>
+                    <td>
+                        <div class="flex items-center gap-3">
+                            <div class="avatar">
+                                <div class="mask mask-squircle h-12 w-12">
+                                    <img src="{{ user.created_by.imgurl }}" alt="Avatar" />
+                                </div>
+                            </div>
+                            <div>
+                                <div class="font-bold">{{ user.created_by.parentname }}</div>
+                                <div class="text-sm opacity-50">{{ user.created_by.phone }}/{{ user.created_by.phone2 }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        {{ user.visitor_name }} - {{ user.visitor_relationship }}
+                        <br />
+                        <span class="text-sm opacity-50">{{ user.visitor_contact }}</span>
+                    </td>
+                    <td>{{ user.code }}</td>
+                    <th>
+                        <button class="btn btn-ghost btn-xs">{{ user.reason }}</button>
+                    </th>
+                    <th>
+                        <button class="btn btn-ghost btn-xs">{{ user.date_created }}</button>
+                    </th>
+                    <th>
+                        {% if user.is_active %}
+                        <button class="badge badge-success gap-2">Active</button>
+                        {% else %}
+                        <button class="badge badge-error gap-2">Inactive</button>
+                        {% endif %}
+                    </th>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+
+</script>
+{% endblock %}
