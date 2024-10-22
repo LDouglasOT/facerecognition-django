@@ -430,9 +430,9 @@ class UploadImageView(APIView):
     
     def put(self, request):
         try:
-            parentName=request.data.get("parentName")
+            parentName=request.data.get("parentname")
             email=request.data.get("email")
-            phone2=request.data.get("phone2")
+            phone2=request.data.get("phone")
             imageUrl=request.data.get("imageUrl")
             token=request.data.get("token")
             print(token)
