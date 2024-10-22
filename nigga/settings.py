@@ -14,6 +14,8 @@ from datetime import timedelta
 import os
 from pathlib import Path
 
+import dj_database_url
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -96,6 +98,9 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+database_url = os.environ.get('DATABASE')
+DATABASES['default']=dj_database_url.parse("postgresql://twinbrook_db_user:cvmrJiyqpV3SEY9UFDqAQJFyZcMAgqjc@dpg-csbkrfa3esus73frt85g-a.oregon-postgres.render.com/twinbrook_db")
+
 
 
 # Password validation
