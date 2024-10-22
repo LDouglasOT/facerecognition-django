@@ -83,6 +83,7 @@ class Student(models.Model):
     imgurl = models.CharField(max_length=1000, blank=True)
     isActive = models.BooleanField(default=True)
     paycode = models.CharField(max_length=100, blank=True)
+    payable = models.IntegerField(default=1000000)
 
     def __str__(self):
         return self.Name

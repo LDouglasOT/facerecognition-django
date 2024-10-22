@@ -566,6 +566,7 @@ class SchoolpayJob(APIView):
 
             data = response.json()
             transactions = data.get('transactions', [])
+            # print(transactions)
             for transaction in transactions:
                 try:
 
@@ -586,6 +587,7 @@ class SchoolpayJob(APIView):
 
         except Exception as error:
             return Response({'message': 'Error'}, status=500)
+import datetime
 
 
 class BOPpayJob(APIView):
@@ -599,12 +601,14 @@ class BOPpayJob(APIView):
         try:
             url = f"https://schoolpay.co.ug/paymentapi/AndroidRS/SyncSchoolTransactions/{code}/{value}/{fky}"
             response = requests.get(url)
-
+            print(response)
             if response.status_code != 200:
                 return Response({'message': 'Error'}, status=400)
 
             data = response.json()
+
             transactions = data.get('transactions', [])
+            print(transaction)
             for transaction in transactions:
                 try:
 
@@ -656,3 +660,47 @@ class TransactionsListView(APIView):
 
             print(e)
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class Checkfees(APIView):
+    def post(self, request):
+        print(request.data)
+        phone = request.data.get("phone","")
+        print(phone)
+        students = Student.objects.filter(phone = phone)
+        if len(students) == 0:
+            return Response(status=200)
+        
+        st = ""
+        total = 0
+        paycode = []
+        print(students)
+        for s in students:
+            print(s.Name)
+            st += s.Name + " "
+            total += s.payable
+            paycode.append(s.paycode)
+
+        transactions = Transactions.objects.filter(PayCode__in=paycode)
+        totals = 0
+        for t in transactions:
+            totals += t.amountpaid
+
+        return Response({"total":total, "names":st,'totals':totals},status=200)
+
+
+class sms(APIView):
+    def post(self,request):
+        phone = request.data.get("phone")
+        sms = request.data.get("sms")
+        
+        contextx = {
+            "msisdn": [phone],
+            "message": sms,
+            "username": "odysseytech",
+            "password": "NtWpD@6n&V7mTR"
+        }
+
+        # Send POST request to the SMS API
+        response = requests.post("https://mysms.trueafrican.com/v1/api/esme/send", json=contextx)
+        
