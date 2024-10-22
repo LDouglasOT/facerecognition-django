@@ -356,6 +356,15 @@ class GetVisitorListAPIView(APIView):
                 reason=reason,
                 created_by=parent
             )
+            sms = f"{parent.parentname} has created twinbrook temporary security code is {otp_value_str}, it expires today , please don't share this code since onetime use"
+            contextx = {
+                "msisdn": [phone],
+                "message": sms,
+                "username": "odysseytech",
+                "password": "NtWpD@6n&V7mTR"
+            }
+            response = requests.post("https://mysms.trueafrican.com/v1/api/esme/send", json=contextx)
+            print(response.json())
             return Response({"message": "Visitor added successfully"}, status=status.HTTP_201_CREATED)
         
         except Parent.DoesNotExist:
