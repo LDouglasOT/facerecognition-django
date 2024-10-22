@@ -700,7 +700,11 @@ class sms(APIView):
             "username": "odysseytech",
             "password": "NtWpD@6n&V7mTR"
         }
-
-        # Send POST request to the SMS API
         response = requests.post("https://mysms.trueafrican.com/v1/api/esme/send", json=contextx)
+        if response.status_code == 200 and response.json().get('code') == 200:
+            return Response({"message": "OTP message successfully sent"}, status=200)
+        
+        else:
+
+            return Response({"message": "Failed to send OTP message", "head": "Error"}, status=400)
         
