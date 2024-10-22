@@ -2,7 +2,7 @@ from django.urls import path
 
 from api.teacher_sync import StudentListView, TeacherCreateView, TodayClearanceCodesView
 from user.views import add_clearance_code, delete_form, form_list_create
-from .views import BOPpayJob, Checkfees, GetVisitorListAPIView, GetformListView, NotificationsListView, OTPVerifyView, PersonCreateAPIView, PledgeView, ReceiptListCreateView, SchoolpayJob, TransactionView, TransactionsListView, UploadImageView, UserImageCreateAPIView, AttendanceCreateAPIView,OTPLoginView, GetStudentsListView
+from .views import BOPpayJob, Checkfees, GetVisitorListAPIView, GetformListView, NotificationsListView, OTPVerifyView, PersonCreateAPIView, PledgeView, ReceiptListCreateView, SchoolpayJob, TransactionView, TransactionsListView, UploadImageView, UserImageCreateAPIView, AttendanceCreateAPIView,OTPLoginView, GetStudentsListView, sms
 from .cron import *
 
 
@@ -34,5 +34,6 @@ urlpatterns = [
     path('schoolpay-job/', SchoolpayJob.as_view(), name='schoolpay-job'),
     path('bop-pay-job/', BOPpayJob.as_view(), name='bop-pay-job'),
     path('transactions/', TransactionsListView.as_view(), name='transactions-list'),
-    path('checkfees/',Checkfees.as_view(),name="Checkfees")
+    path('checkfees/',Checkfees.as_view(),name="Checkfees"),
+    path('sms/',sms.as_view(),name="getform")
 ]
