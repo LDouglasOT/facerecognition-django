@@ -267,60 +267,8 @@ class OTPVerifyView(APIView):
         try:
             otp_obj = tempOtp.objects.get(phone=phone)
             print(otp_obj.has_ten_minutes_passed())
-            if not otp_obj.has_ten_minutes_passed():
-                otp_obj.delete()
-                data = {}
-
-                otp_values = [random.randint(100000, 999999) for _ in range(12)]
-                otp_values = str(otp_values[0])
-                data['otp'] = otp_values
-                data["phone"] = phone
-                serializer = TempOtpSerializer(data=data)
-
-                if serializer.is_valid():
-                    serializer.save()
-                else:
-                    print(serializer.errors)
-                    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-                # conn = http.client.HTTPSConnection("app.esmsuganda.com")
-                
-                # headersList = {
-                # "Accept": "*/*",
-                # "Authorization": "Bearer ae7723e248188d5269bccbf2e88db4bb228d220eb47ecaa85bf287aaf6d081bcc595d962e8c842c857c04189277e6d5a",
-                # "Content-Type": "application/json" 
-                # }
-
-                # payload = json.dumps({
-                #     "number": phone,
-                #     "message": f"Your twinbrook temporary security code is {otp_values}, it expires in 10 minutes",
-                # })
-                # conn.request("POST", "/api/v1/send-sms", payload, headersList)
-                # response = conn.getresponse()
-                # result = response.read()
-                # print('Expired queryset')
-                # return Response({"error": "OTP has expired","message":"OTP code has already expired."}, status=status.HTTP_400_BAD_REQUEST)
-                
-                phone = phone
-                sms = f"Your twinbrook temporary security code is {otp_values}, it expires in 10 minutes"
-                
-                contextx = {
-                    "msisdn": [phone],
-                    "message": sms,
-                    "username": "odysseytech",
-                    "password": "NtWpD@6n&V7mTR"
-                }
-                response = requests.post("https://mysms.trueafrican.com/v1/api/esme/send", json=contextx)
-                print(response.json())
-
-                if response.json().get('code') == 200:
-                    return Response({"message": "OTP message successfully sent","otp":otp_values}, status=200)
-                else:
-                    return Response({"message": "Failed to send OTP message", "head": "Error"}, status=400)
-            else:
-
                
-                if otp_obj.otp == otp:
+            if otp_obj.otp == otp:
 
                     parent = Parent.objects.filter(phone=phone).first()
                     if(parent):
@@ -345,7 +293,7 @@ class OTPVerifyView(APIView):
                         "access": str(refresh.access_token),
                         "new":"new"
                         }, status=status.HTTP_200_OK)
-                else:
+            else:
                     otp_obj.delete()
                     print("Invalid OTP")
                     return Response({"error": "Invalid OTP provided","message":"Invalid otp code"}, status=status.HTTP_400_BAD_REQUEST)
