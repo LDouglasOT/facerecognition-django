@@ -181,26 +181,45 @@ class OTPLoginView(APIView):
                     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
                 
                 
-                conn = http.client.HTTPSConnection("app.esmsuganda.com")
-                headersList = {
-                "Accept": "*/*",
-                "Authorization": "Bearer ae7723e248188d5269bccbf2e88db4bb228d220eb47ecaa85bf287aaf6d081bcc595d962e8c842c857c04189277e6d5a",
-                "Content-Type": "application/json" 
+                # conn = http.client.HTTPSConnection("app.esmsuganda.com")
+                # headersList = {
+                # "Accept": "*/*",
+                # "Authorization": "Bearer ae7723e248188d5269bccbf2e88db4bb228d220eb47ecaa85bf287aaf6d081bcc595d962e8c842c857c04189277e6d5a",
+                # "Content-Type": "application/json" 
+                # }
+                # payload = json.dumps({
+                # "number":phone,
+                # "message":f" Your twinbrook temporary security code is {otp_values}, it expires in 10 minutes",
+                # })
+                # print("sent to teacher")
+                # conn.request("POST", "/api/v1/send-sms", payload, headersList)
+                # response = conn.getresponse()
+                # result = response.read()
+                # print(result)
+                # print(result.decode("utf-8"))
+
+                phone = phone
+                sms = f"Your twinbrook temporary security code is {otp_values}, it expires in 10 minutes"
+                
+                contextx = {
+                    "msisdn": [phone],
+                    "message": sms,
+                    "username": "odysseytech",
+                    "password": "NtWpD@6n&V7mTR"
                 }
-                payload = json.dumps({
-                "number":phone,
-                "message":f" Your twinbrook temporary security code is {otp_values}, it expires in 10 minutes",
-                })
-                print("sent to teacher")
-                conn.request("POST", "/api/v1/send-sms", payload, headersList)
-                response = conn.getresponse()
-                result = response.read()
-                print(result)
-                print(result.decode("utf-8"))
-                return Response({"message": "OTP sent successfully","otp":otp_values}, status=status.HTTP_200_OK)
+                response = requests.post("https://mysms.trueafrican.com/v1/api/esme/send", json=contextx)
+                print(response.json())
+
+                if response.json().get('code') == 200:
+                    return Response({"message": "OTP message successfully sent","otp":otp_values}, status=200)
+                else:
+                    return Response({"message": "Failed to send OTP message", "head": "Error"}, status=400)
+
+
 
         except CustomUser.DoesNotExist:
             return Response({"error": "User not found","message":"This phone number is not connected on any student account at twinbrook"}, status=status.HTTP_404_NOT_FOUND)
+        
     def get(self, request, *args, **kwargs):
         otps = tempOtp.objects.all()
         return Response(TempOtpSerializer(otps, many=True).data, status=status.HTTP_200_OK)
@@ -264,23 +283,40 @@ class OTPVerifyView(APIView):
                     print(serializer.errors)
                     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-                conn = http.client.HTTPSConnection("app.esmsuganda.com")
+                # conn = http.client.HTTPSConnection("app.esmsuganda.com")
                 
-                headersList = {
-                "Accept": "*/*",
-                "Authorization": "Bearer ae7723e248188d5269bccbf2e88db4bb228d220eb47ecaa85bf287aaf6d081bcc595d962e8c842c857c04189277e6d5a",
-                "Content-Type": "application/json" 
-                }
+                # headersList = {
+                # "Accept": "*/*",
+                # "Authorization": "Bearer ae7723e248188d5269bccbf2e88db4bb228d220eb47ecaa85bf287aaf6d081bcc595d962e8c842c857c04189277e6d5a",
+                # "Content-Type": "application/json" 
+                # }
 
-                payload = json.dumps({
-                    "number": phone,
-                    "message": f"Your twinbrook temporary security code is {otp_values}, it expires in 10 minutes",
-                })
-                conn.request("POST", "/api/v1/send-sms", payload, headersList)
-                response = conn.getresponse()
-                result = response.read()
-                print('Expired queryset')
-                return Response({"error": "OTP has expired","message":"OTP code has already expired."}, status=status.HTTP_400_BAD_REQUEST)
+                # payload = json.dumps({
+                #     "number": phone,
+                #     "message": f"Your twinbrook temporary security code is {otp_values}, it expires in 10 minutes",
+                # })
+                # conn.request("POST", "/api/v1/send-sms", payload, headersList)
+                # response = conn.getresponse()
+                # result = response.read()
+                # print('Expired queryset')
+                # return Response({"error": "OTP has expired","message":"OTP code has already expired."}, status=status.HTTP_400_BAD_REQUEST)
+                
+                phone = phone
+                sms = f"Your twinbrook temporary security code is {otp_values}, it expires in 10 minutes"
+                
+                contextx = {
+                    "msisdn": [phone],
+                    "message": sms,
+                    "username": "odysseytech",
+                    "password": "NtWpD@6n&V7mTR"
+                }
+                response = requests.post("https://mysms.trueafrican.com/v1/api/esme/send", json=contextx)
+                print(response.json())
+
+                if response.json().get('code') == 200:
+                    return Response({"message": "OTP message successfully sent","otp":otp_values}, status=200)
+                else:
+                    return Response({"message": "Failed to send OTP message", "head": "Error"}, status=400)
             else:
 
                

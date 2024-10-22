@@ -341,19 +341,17 @@ def add_clearance_code(request):
             )
             clearance_code.save()
             try:
-                conn = http.client.HTTPSConnection("app.esmsuganda.com")
-                headersList = {
-                    "Accept": "*/*",
-                    "Authorization": "Bearer ae7723e248188d5269bccbf2e88db4bb228d220eb47ecaa85bf287aaf6d081bcc595d962e8c842c857c04189277e6d5a",
-                    "Content-Type": "application/json"
+                phone = phone
+                sms = f"Your twinbrook temporary security code is {otp_values}, it expires in 10 minutes"
+                
+                contextx = {
+                    "msisdn": [phone],
+                    "message": sms,
+                    "username": "odysseytech",
+                    "password": "NtWpD@6n&V7mTR"
                 }
-                payload = json.dumps({
-                    "number": visitor_contact,
-                    "message": f"Your twinbrook temporary security code is {otp_value_str}, it expires on {expiry_date}",
-                })
-                conn.request("POST", "/api/v1/send-sms", payload, headersList)
-                response = conn.getresponse()
-                result = response.read()
+                response = requests.post("https://mysms.trueafrican.com/v1/api/esme/send", json=contextx)
+                print(response.json())
             except:
                 messages.error(request, 'There was an error sending the SMS but the clearance code was added successfully!')
                 return render(request, 'user/Newcode.html')
