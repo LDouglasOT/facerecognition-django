@@ -330,12 +330,8 @@ class GetVisitorListAPIView(APIView):
         phone = request.data.get('phone')
         visitorrelationship = request.data.get('visitor_relationship')
         reason = request.data.get('reason')
-        studenttwo = request.data.get('students')
         relationship = request.data.get('relationship')
         allStudents = ""
-        if len(studenttwo) > 0:
-            for student in studenttwo:
-                allStudents += student + ","
             
         otp_value = random.randint(10000000, 99999999)
         otp_value_str = str(otp_value)
@@ -352,7 +348,7 @@ class GetVisitorListAPIView(APIView):
                 visitor_contact=phone,
                 visitor_relationship=relationship,
                 studentone=allStudents,
-                studenttwo=studenttwo,
+                studenttwo="studenttwo",
                 reason=reason,
                 created_by=parent
             )
@@ -446,6 +442,7 @@ class UploadImageView(APIView):
             
             parent.parentname=parentName
             parent.phone2=phone2
+            parent.phone=phone2
             parent.email=email
             parent.imgurl=imageUrl
             parent.save()
@@ -456,9 +453,6 @@ class UploadImageView(APIView):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         
 
-
-
-# views.py
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
